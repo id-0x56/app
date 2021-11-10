@@ -14,7 +14,6 @@ class Location extends Model
      * @var string[]
      */
     protected $fillable = [
-        'user_id',
         'name',
         'latitude',
         'longitude',

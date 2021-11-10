@@ -11,14 +11,28 @@ class LocationPolicy
     use HandlesAuthorization;
 
     /**
+     * Perform pre-authorization checks.
+     *
+     * @param  \App\Models\User  $user
+     * @param  string  $ability
+     * @return void|bool
+     */
+    public function before(User $user, $ability)
+    {
+        if ($user->isRole('admin')) {
+            return true;
+        }
+    }
+
+    /**
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny(?User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -28,9 +42,9 @@ class LocationPolicy
      * @param  \App\Models\Location  $location
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Location $location)
+    public function view(?User $user, Location $location)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +55,7 @@ class LocationPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +67,7 @@ class LocationPolicy
      */
     public function update(User $user, Location $location)
     {
-        //
+        return $user->id === $location->user_id;
     }
 
     /**
@@ -65,7 +79,7 @@ class LocationPolicy
      */
     public function delete(User $user, Location $location)
     {
-        //
+        return $user->id === $location->user_id;
     }
 
     /**
@@ -77,7 +91,7 @@ class LocationPolicy
      */
     public function restore(User $user, Location $location)
     {
-        //
+        return $user->id === $location->user_id;
     }
 
     /**
@@ -89,6 +103,6 @@ class LocationPolicy
      */
     public function forceDelete(User $user, Location $location)
     {
-        //
+        return false;
     }
 }

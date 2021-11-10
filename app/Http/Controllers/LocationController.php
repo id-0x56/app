@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LocationStoreRequest;
+use App\Http\Requests\LocationUpdateRequest;
 use App\Http\Resources\LocationCollection;
 use App\Http\Resources\LocationResource;
 use App\Models\Location;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class LocationController extends Controller
 {
@@ -22,6 +22,7 @@ class LocationController extends Controller
     public function __construct(Location $location)
     {
         $this->location = $location;
+        $this->authorizeResource(Location::class);
     }
 
     /**
@@ -36,24 +37,25 @@ class LocationController extends Controller
 
         return (new LocationCollection($locations))
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(JsonResponse::HTTP_OK);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param LocationStoreRequest $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(LocationStoreRequest $request): JsonResponse
     {
-        $location = $this->location->create(
-            $request->except(['_token'])
-        );
+        $location = auth()->user()->locations()
+            ->create(
+                $request->validated()
+            );
 
         return (new LocationResource($location))
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(JsonResponse::HTTP_CREATED);
     }
 
     /**
@@ -66,25 +68,25 @@ class LocationController extends Controller
     {
         return (new LocationResource($location))
             ->response()
-            ->setStatusCode(Response::HTTP_OK);
+            ->setStatusCode(JsonResponse::HTTP_OK);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param LocationUpdateRequest $request
      * @param \App\Models\Location $location
      * @return JsonResponse
      */
-    public function update(Request $request, Location $location): JsonResponse
+    public function update(LocationUpdateRequest $request, Location $location): JsonResponse
     {
         $location->update(
-            $request->except(['_token'])
+            $request->validated()
         );
 
         return (new LocationResource($location))
             ->response()
-            ->setStatusCode(Response::HTTP_ACCEPTED);
+            ->setStatusCode(JsonResponse::HTTP_ACCEPTED);
     }
 
     /**
@@ -98,6 +100,6 @@ class LocationController extends Controller
         $location->delete();
 
         return response()
-            ->json([], Response::HTTP_NO_CONTENT);
+            ->json([], JsonResponse::HTTP_NO_CONTENT);
     }
 }
