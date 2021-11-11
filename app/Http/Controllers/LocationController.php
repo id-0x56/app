@@ -102,4 +102,29 @@ class LocationController extends Controller
         return response()
             ->json([], JsonResponse::HTTP_NO_CONTENT);
     }
+
+    /**
+     * @param Location $location
+     * @return JsonResponse
+     */
+    public function restore(Location $location): JsonResponse
+    {
+        $location->restore();
+
+        return (new LocationResource($location))
+            ->response()
+            ->setStatusCode(JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * @param Location $location
+     * @return JsonResponse
+     */
+    public function forceDelete(Location $location): JsonResponse
+    {
+        $location->forceDelete();
+
+        return response()
+            ->json([], JsonResponse::HTTP_NO_CONTENT);
+    }
 }

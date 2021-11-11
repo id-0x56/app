@@ -30,6 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [\App\Http\Controllers\LocationController::class, 'store']);
         Route::match(['put', 'patch'], '/{location}', [\App\Http\Controllers\LocationController::class, 'update']);
         Route::delete('/{location}', [\App\Http\Controllers\LocationController::class, 'destroy']);
+        Route::patch('/{location}/restore', [\App\Http\Controllers\LocationController::class, 'restore'])
+            ->middleware('can:restore,location');
+        Route::delete('/{location}/force-delete', [\App\Http\Controllers\LocationController::class, 'forceDelete'])
+            ->middleware('can:forceDelete,location');
     });
 });
 
