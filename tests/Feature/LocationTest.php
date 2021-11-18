@@ -33,7 +33,13 @@ class LocationTest extends TestCase
 
     public function test_route_index()
     {
-        $response = $this->getJson('/api/locations');
+        $response = $this->json('GET', '/api/locations', [
+            'min_lat' => $this->faker->latitude(-90, -90),
+            'max_lat' => $this->faker->latitude(90),
+            'min_lng' => $this->faker->longitude(-180, -180),
+            'max_lng' => $this->faker->longitude(180),
+        ]);
+
         $response->assertStatus(200);
 
         $response->assertJsonStructure([

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LocationIndexRequest;
 use App\Http\Requests\LocationStoreRequest;
 use App\Http\Requests\LocationUpdateRequest;
 use App\Http\Resources\LocationCollection;
@@ -28,11 +29,24 @@ class LocationController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param LocationIndexRequest $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(LocationIndexRequest $request): JsonResponse
     {
-        $locations = Location::query()
+        $query = $this->location->query();
+
+        if ($request->has(['min_lat', 'max_lat'])) {
+            $query
+                ->whereBetween('latitude', $request->safe()->only(['min_lat', 'max_lat']));
+        }
+
+        if ($request->has(['min_lng', 'max_lng'])) {
+            $query
+                ->whereBetween('longitude', $request->safe()->only(['min_lng', 'max_lng']));
+        }
+
+        $locations = $query
             ->get();
 
         return (new LocationCollection($locations))
