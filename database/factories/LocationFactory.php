@@ -18,7 +18,7 @@ class LocationFactory extends Factory
         return [
             'user_id' => User::inRandomOrder()->first()->id,
             'name' => $this->faker->unique->sentence,
-            'latitude' => $this->faker->latitude,
+            'latitude' => $this->faker->latitude(-55, 85),
             'longitude' => $this->faker->longitude,
             'deleted_at' => rand(1, 5) === 5 ? Carbon::now() : null,
         ];
